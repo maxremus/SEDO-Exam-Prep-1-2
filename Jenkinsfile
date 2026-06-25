@@ -9,38 +9,32 @@ pipeline {
             }
         }
 
+        stage('Restore') {
+            steps {
+                bat 'dotnet restore'
+            }
+        }
+
         stage('Build') {
             steps {
-                script {
-                    if (isUnix()) {
-                        sh 'mvn clean package -DskipTests'
-                    } else {
-                        bat 'mvn clean package -DskipTests'
-                    }
-                }
+                bat 'dotnet build'
             }
         }
 
         stage('Test') {
             steps {
-                script {
-                    if (isUnix()) {
-                        sh 'mvn test'
-                    } else {
-                        bat 'mvn test'
-                    }
-                }
+                bat 'dotnet test'
             }
         }
     }
 
     post {
         success {
-            echo "SUCCESS: Build and tests passed on ${env.BRANCH_NAME}"
+            echo "SUCCESS: .NET build and tests passed on ${env.BRANCH_NAME}"
         }
 
         failure {
-            echo "FAILED: Build or tests failed on ${env.BRANCH_NAME}"
+            echo "FAILED: .NET build or tests failed"
         }
     }
 }
